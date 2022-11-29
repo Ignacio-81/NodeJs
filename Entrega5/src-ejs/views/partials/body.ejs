@@ -1,0 +1,9 @@
+<h1>My Products Shop</h1>
+<% if (hasAny) { %> <% products.forEach(function(product){ %>
+
+<h2><%= product.title %></h2>
+<img src="<%= product.thumbnail %>" alt="" width="100" />
+<p><%= product.price %></p>
+<% }) %><% }else{ %>
+<h2>No product Found</h2>
+<% } %>

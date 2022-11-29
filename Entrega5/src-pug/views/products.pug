@@ -1,0 +1,16 @@
+extends main.pug
+
+block data
+    h1 Add Products:
+    a(href="http://localhost:3000/static/index.html") 
+        button(type='button') Load your Product
+    
+    h1 My Products Shop
+    if hasAny 
+        each item in products 
+            h2=item.title
+            img(src=item.thumbnail alt="" width="100")
+            p= "Price :" +item.price 
+    else 
+        h2 No product Found
+ 

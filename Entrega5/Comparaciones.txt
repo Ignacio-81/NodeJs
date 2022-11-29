@@ -1,0 +1,6 @@
+Pug es un poco confuso con el tema de las tabulaciones. Para mi es el menos conveniente.
+EJS, ya que es felxible a la hora de insertar codigo, es mas estructurado para armar el 
+html, pede llevar mas tiempo de implementar ya que es mas complejo debido a la 
+simbologia que dispone para poder instertar distinto tipo de lenguaje.
+HandlerBars es mejor que Pug es simple de codificar pero no tiene tanta flexibilidad. 
+Tambien es menos complejo que EJS, por eso creo que para desarrollos rapidos es mas practico.
