@@ -1,0 +1,38 @@
+
+<form id="addProductForm">
+  <!-- action="/loadproduct" method="POST"> -->
+  <div class="mb-3">
+    <label for="name">Product Title: </label>
+    <input
+      type="text"
+      class="form-control"
+      id="name"
+      name="title"
+      placeholder="Enter Title"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="price">Product Price:</label>
+    <input
+      type="number"
+      class="form-control"
+      id="price"
+      name="price"
+      placeholder="Price"
+      required
+    />
+  </div>
+  <div class="mb-3">
+    <label for="thumbnail">Enter Thumbnail URL</label>
+    <input
+      type="thumbnail"
+      class="form-control"
+      id="thumbnail"
+      name="thumbnail"
+      placeholder="enter URL"
+    />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Send Product</button>
+</form>
