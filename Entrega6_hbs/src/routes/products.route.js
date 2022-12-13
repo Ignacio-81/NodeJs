@@ -1,73 +1,75 @@
-import {Router} from "express"
+import { Router } from "express"
+import { products } from "../../src/server.js"
 
 const router = Router();
 
 router.get("/", (req, res) => {
-    if ((products.length == 0) || (products == "[]")){
+    console.log("en el get", products)
+    if ((products.length == 0) || (products == "[]")) {
         res.render("products", { products, hasAny: false })
     }
-    
-    res.render("products", { products, hasAny: true })
+
+    res.status(201).render("products", { products, hasAny: true })
 })
 
-router.post("/loadproduct", (req,res)=>{ 
-    let id 
+router.post("/loadproduct", (req, res) => {
+    let id
     const prod = req.body
     console.log(prod);//debug optional
-    if (!prod.title || !prod.price ){
+    if (!prod.title || !prod.price) {
         res.status(400).send("You must send title, price and url");
-    }else{  
+    } else {
         prod.price = parseInt(prod.price)
-        if (!products.length == 0){
+        if (!products.length == 0) {
             id = products.length + 1
-        }else{
+        } else {
             id = 1
         }
-        products.push({'id': id , ...prod})
+        products.push({ 'id': id, ...prod })
         //res.status(201).json(products.find((products) => products.id === id)).redirect("/products")
         res.status(201).redirect("/products")
-    } 
+    }
 
-}) 
-router.post("/chat", (req,res)=>{ 
-    let id 
+})
+router.post("/chat", (req, res) => {
+    let id
     const chat = req.body
     console.log(prod);//debug optional
-    if (!chat.userName || !chat.message ){
+    if (!chat.userName || !chat.message) {
         res.status(400).send("You must send username and message");
-    }else{  
+    } else {
 
         res.status(201).redirect("/")
-    } 
+    }
 
-}) 
-router.get("/products/:id",(req, res) => {
-    
-    if ((products.length == 0) || (products == "[]")){
+})
+router.get("/products/:id", (req, res) => {
+
+    if ((products.length == 0) || (products == "[]")) {
         res.status(400).send("Product not found");
     }
     //Find object inside the array with the id 
     const objId = products.find((products) => products.id === parseInt(req.params.id))
-    if (objId != -1){
+    if (objId != -1) {
         res.status(200).json(objId)
-    }else {
-        console.log('The product with Id: '+req.params.id+' does not exists')   
-        res.status(400).send('The product with Id: '+req.params.id+' does not exists')
+    } else {
+        console.log('The product with Id: ' + req.params.id + ' does not exists')
+        res.status(400).send('The product with Id: ' + req.params.id + ' does not exists')
     }
 })
-router.delete("/products/:id",(req, res) => {
-    
-    if ((products.length == 0) || (products == "[]")){
+router.delete("/products/:id", (req, res) => {
+
+    if ((products.length == 0) || (products == "[]")) {
         res.status(400).send("There is no product on the server");
     }
     //Find object inside the array with the id 
     const objId = products.findIndex((products) => products.id === parseInt(req.params.id))
-    if (objId != -1){
+    if (objId != -1) {
         products.splice(objId, 1);
-        res.status(201).send('The product with Id: '+req.params.id+' was deleted successfully')
-    }else {
-        console.log('The product with Id: '+req.params.id+' does not exists')   
-        res.status(400).send('The product with Id: '+req.params.id+' does not exists')
+        res.status(201).send('The product with Id: ' + req.params.id + ' was deleted successfully')
+    } else {
+        console.log('The product with Id: ' + req.params.id + ' does not exists')
+        res.status(400).send('The product with Id: ' + req.params.id + ' does not exists')
     }
 })
 

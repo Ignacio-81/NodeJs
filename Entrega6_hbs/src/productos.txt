@@ -22,5 +22,6 @@
     "price": 15000,
     "thumbnail": "https://img.freepik.com/psd-premium/imagen-tridimensional-coche_53876-1716.jpg?w=2000",
     "id": 4
-  }
+  },
+
 ]

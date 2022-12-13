@@ -2,7 +2,7 @@ import express from "express"
 import { engine } from "express-handlebars"
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-//import routes from "./routes/products.route.js"
+import routes from "./routes/products.route.js"
 import { Server as IOServer } from "socket.io";
 
 import Container from "./container.js";
@@ -34,9 +34,9 @@ app.on("error", (err) => {
     console.log(err)
 })
 const io = new IOServer(expressServer);
-const products = await contenedor.getAll()
+export let products = await contenedor.getAll()
 const messages = [];
-//app.use("/", routes);
+app.use("/", routes);
 
 //Add product properly into the array with ID
 const postProduct = (prod) => {
@@ -84,12 +84,5 @@ io.on("connection", (socket) => {
         // send message to all users
         io.emit("server:message", messages);
     });
-});
-
-app.get("/", (req, res) => {
-    console.log("en el get", products);//debug optional
-
-    res.status(201).render("products", { products, hasAny: true })
-    //res.status(201).render("products")
 });
 
