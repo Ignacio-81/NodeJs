@@ -3,13 +3,13 @@ import { products, productsRepo } from "../../src/server.js"
 
 const router = Router();
 //Variable to configure Admin block .
-const admin = true
+const admin = false
 
 const checkAdmin = (req, res, next) => {
     if (admin) {
         next()
     } else {
-        res.json(error = -1, description = `route ${req.path} of method ${req.method} is not implemented`)
+        res.json({ error: -1, description: `route ${req.path} of method ${req.method} not authorized` })
     }
 }
 
