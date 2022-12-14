@@ -8,7 +8,7 @@ export default class Container {
         let data
         let objArr = []
         if (!fs.existsSync(this.fileName)) {
-            throw new Error('File not found!, plase create your file Before! ' + fileName);
+            throw new Error('File not found!, plase create your file Before! ' + this.fileName);
         }
         data = await fs.promises.readFile(this.fileName, 'utf-8')
         objArr = JSON.parse(data)
@@ -21,7 +21,7 @@ export default class Container {
     async writeAll(obj) {
 
         if (!fs.existsSync(this.fileName)) {
-            throw new Error('File not found!, plase create your file Before! ' + fileName);
+            throw new Error('File not found!, plase create your file Before! ' + this.fileName);
         }
         await fs.promises.writeFile(this.fileName, JSON.stringify(obj, null, 2))
 
