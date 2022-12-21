@@ -15,7 +15,7 @@ const renderProducts = (productData) => {
     console.log("Data de producto : ", productData)
     productsPool.innerHTML = ""
     productData.forEach((product) => {
-        const { title, price, thumbnail, id } = product
+        const { title, price, thumbnail } = product
         productsPool.innerHTML += `
             <tr>
                 <td>

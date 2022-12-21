@@ -1,100 +1,71 @@
-
+//import database from '../db/index_mysql.js'
+import knex from "knex";
 export default class Container {
 
-    constructor(database, table) {
-        this.database = database;
+    constructor(table, config) {
         this.table = table;
+        this.database = knex(config);
     }
 
-    async save(product) {
-        let data
-        let objArr = []
-        if (!fs.existsSync(this.fileName)) {
-            throw new Error('File not found!, plase create your file Before! ' + this.fileName);
-        }
-        data = await fs.promises.readFile(this.fileName, 'utf-8')
-        if (!data.length == 0) {
-            objArr = JSON.parse(data)
-            product.id = objArr.length + 1
-            //throw new Error('File is empty! ' + this.fileName);
-        } else {
-            product.id = 1
-        }
-        objArr.push(product)
-        await fs.promises.writeFile(this.fileName, JSON.stringify(objArr, null, 2))
-        return product.id
+    async save(data) {
+        try {
+            console.log("Data para DB :" + data)
+            const res = await this.database(this.table).insert(data);
+            console.log("New Product Inserted");
 
+            //this.database.destroy();
+            return res
+        } catch (err) {
+            //this.database.destroy();
+            throw new Error(`Error while writing DataBase: ${err}`)
+        }
+
+
+    }
+    async update(id, data) {
+        try {
+            await this.database(this.table).where({ id }).update(data)
+        } catch (err) {
+            throw new Error(`Error while updating data with id: ${err}`)
+        }
     }
     async getById(id) {
         try {
-            let data
-            let objArr = []
-            if (!fs.existsSync(this.fileName)) {
-                throw new Error('File not found!, plase create your file Before! ' + this.fileName);
-            }
-            data = await fs.promises.readFile(this.fileName, 'utf-8')
-            if ((data.length == 0) || (data == "[]")) {
-                throw new Error('File is empty! ' + this.fileName);
-            }
-            objArr = JSON.parse(data)
             //Find object inside the array with the id 
-            const objId = objArr.find((objArr) => objArr.id === id)
-            if (objId != -1) {
-                console.log(objId)
-                return objId
-            } else {
-                console.log('The product with Id: ' + id + ' does not exists')
-                return null
-            }
+            const response = await database.from(this.table).select("*").where({ id })
+            return response
 
         } catch (err) {
-            throw new Error(`Error while reading File: ${err}`)
+            throw new Error(`Error while getting data with id: ${err}`)
         }
     }
     async getAll() {
         try {
-            //let data = JSON.parse(await fs.promises.readFile(this.fileName, 'utf-8'))
-            const data = await this.database.from("products").select("*")
-            this.database.destroy()
+            const data = await this.database.from(this.table).select("*")
+            //this.database.destroy()
             return data
         } catch (err) {
-            console.log(err);
-            database.destroy();
-            //throw new Error(`Error while reading File: ${err}`)
+            //this.database.destroy();
+            throw new Error(`Error while reading DataBase: ${err}`)
         }
     }
 
     async deleteById(id) {
-        let data
-        let objArr = []
-        if (!fs.existsSync(this.fileName)) {
-            throw new Error('File not found!, plase create your file Before! ' + this.fileName);
-        }
-        data = await fs.promises.readFile(this.fileName, 'utf-8')
-        if ((data.length == 0) || (data == "[]")) {
-            throw new Error('File is empty! ' + this.fileName);
-        }
-        objArr = JSON.parse(data)
-        //Find object inside the array with the id , the remove it from the array
-        const objId = objArr.findIndex((objArr) => objArr.id === id)
-        if (objId != -1) {
-            objArr.splice(objId, 1);
-            await fs.promises.writeFile(this.fileName, JSON.stringify(objArr, null, 2))
-            console.log('Product with Id: ' + id + ' was deleted successfully')
-        } else {
-            console.log('The product with Id: ' + id + ' does not exists')
+        try {
+            await this.database(this.table).where({ id }).del()
+            console.log('Data with Id: ' + id + ' was deleted successfully')
+        } catch (err) {
+            throw new Error(`Error while deleting data with id: ${err}`)
         }
     }
 
     async deleteAll() {
-        if (!fs.existsSync(this.fileName)) {
-            throw new Error('File not found!, plase create your file Before! ' + this.fileName);
-        }
+
         try {
-            await fs.promises.writeFile(this.fileName, '[]')
+            await this.database(this.table).del()
             console.log('All products were deleted successfully')
         } catch (err) {
-            throw new Error(`Error while writing the File: ${err}`)
+            throw new Error(`Error while deleting all data from table: ${err}`)
         }
 
 

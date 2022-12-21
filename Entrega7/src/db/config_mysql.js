@@ -1,4 +1,4 @@
-import knex from "knex";
+//import knex from "knex";
 
 const config = {
     client: "mysql",
@@ -11,6 +11,6 @@ const config = {
     pool: { min: 0, max: 7 },
 };
 
-const database = knex(config);
+//const database = knex(config);
 
-export default database;
+export default config;

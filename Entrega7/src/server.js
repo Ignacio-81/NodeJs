@@ -1,13 +1,16 @@
 import express from "express"
-//import {engine} from "express-handlebars"
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-//import routes from "./routes/products.route.js"
 import { Server as IOServer } from "socket.io";
-import database from "./db/index_mysql.js"
 import Container from "./db/DB-container.js";
+import configMySql from './db/config_mysql.js'
+import configSqlite from './db/config_sqlite.js'
+import insertProds from "./table/create-prods.js"
+import createProdTable from "./table/create-prod-table-mysql.js"
+import createChatTable from "./table/create-chat-table-sqlite.js"
 
-let contenedor = new Container(database, "products")
+let dbProducts = new Container("products", configMySql)
+let dbChats = new Container("chats", configSqlite)
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -15,12 +18,21 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use("/static", express.static(__dirname + "/public"));
 
-const io = new IOServer(expressServer);
-const products = await contenedor.getAll()
-const messages = [];
+try {
+    //Create new chat table on SQlite DB
+    await createChatTable("chats")
+    //Create the new table on the database
+    await createProdTable("products")
+
+    //Insert Base products into the database
+    await insertProds()
+
+} catch (err) {
+    console.error(err)
+}
 
 //Add product properly into the array with ID
-const postProduct = (prod) => {
+/* const postProduct = (prod) => {
     let id
     if (!prod.title || !prod.price) {
         console.log("You must send title, price and url");
@@ -35,34 +47,40 @@ const postProduct = (prod) => {
 
 
     }
-}
+ }*/
+
 const expressServer = app.listen(3000, () => console.log('listening on port 3000'));
 app.on("error", (err) => {
     console.log(err)
 })
-io.on("connection", (socket) => {
+const io = new IOServer(expressServer);
+
+io.on("connection", async (socket) => {
     console.log(`New client connection ${socket.id}`);
 
     // send product for new client
-    socket.emit("server:products", products);
+    socket.emit("server:products", await dbProducts.getAll());
 
     // listen products from clients
-    socket.on("client:productData", (productData) => {
+    socket.on("client:productData", async (productData) => {
         // update product array
-        postProduct(productData)
+        console.log("product data : " + { productData })
+        productData.price = parseInt(productData.price)
+        await dbProducts.save(productData)
+
         // send product to all clients
-        const id = contenedor.save(products[products.length - 1])
-        io.emit("server:products", products);
+        io.emit("server:products", await dbProducts.getAll());
     });
     //send chat message for new user
-    socket.emit("server:message", messages);
+    socket.emit("server:message", await dbChats.getAll());
 
     // listen new message from chat
-    socket.on("client:message", (messageInfo) => {
+    socket.on("client:message", async (messageInfo) => {
         // update message array
-        messages.push(messageInfo);
-
+        //messages.push(messageInfo);
+        await dbChats.save(messageInfo)
         // send message to all users
-        io.emit("server:message", messages);
+        console.log("sqilite read" + await dbChats.getAll())
+        io.emit("server:message", await dbChats.getAll());
     });
 });
