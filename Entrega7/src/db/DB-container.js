@@ -1,4 +1,5 @@
-//import database from '../db/index_mysql.js'
+//Container for DB CRUD
+
 import knex from "knex";
 export default class Container {
 

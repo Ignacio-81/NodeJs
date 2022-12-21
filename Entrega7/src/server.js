@@ -31,24 +31,6 @@ try {
     console.error(err)
 }
 
-//Add product properly into the array with ID
-/* const postProduct = (prod) => {
-    let id
-    if (!prod.title || !prod.price) {
-        console.log("You must send title, price and url");
-    } else {
-        prod.price = parseInt(prod.price)
-        if (!products.length == 0) {
-            id = products.length + 1
-        } else {
-            id = 1
-        }
-        products.push({ 'id': id, ...prod })
-
-
-    }
- }*/
-
 const expressServer = app.listen(3000, () => console.log('listening on port 3000'));
 app.on("error", (err) => {
     console.log(err)
@@ -63,8 +45,7 @@ io.on("connection", async (socket) => {
 
     // listen products from clients
     socket.on("client:productData", async (productData) => {
-        // update product array
-        console.log("product data : " + { productData })
+        // update product DB
         productData.price = parseInt(productData.price)
         await dbProducts.save(productData)
 
@@ -77,10 +58,8 @@ io.on("connection", async (socket) => {
     // listen new message from chat
     socket.on("client:message", async (messageInfo) => {
         // update message array
-        //messages.push(messageInfo);
         await dbChats.save(messageInfo)
         // send message to all users
-        console.log("sqilite read" + await dbChats.getAll())
         io.emit("server:message", await dbChats.getAll());
     });
 });
