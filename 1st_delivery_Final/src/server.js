@@ -1,12 +1,16 @@
 import express, { urlencoded, json } from 'express';
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import Container from './data/container.js'
 import productsRouter from './routes/products.routes.js'
 import cartsRouter from './routes/carts.routes.js'
 
-export const productsRepo = new Container('src/data/products.txt')
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+export const productsRepo = new Container(__dirname + '/data/products.txt')
 export let products = await productsRepo.readAll()
 
-export const cartsRepo = new Container('src/data/carts.txt')
+export const cartsRepo = new Container(__dirname + '/data/carts.txt')
 export let carts = await cartsRepo.readAll()
 
 const app = express();
